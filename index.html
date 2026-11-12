@@ -1068,19 +1068,7 @@
             if (backBtn) backBtn.addEventListener('click', () => showSection(i - 1));
         });
 
-        // ============================================
-        // PAINEL DE PREVIEW: 2 OPÇÕES DE NAVEGAÇÃO
-        // ============================================
-        function setNavMode(mode) {
-            document.body.classList.toggle('mode-single', mode === 'single');
-            document.querySelectorAll('.section-error').forEach(e => e.classList.remove('show'));
-            if (mode === 'steps') showSection(currentSection);
-            document.querySelectorAll('[data-nav]').forEach(b =>
-                b.classList.toggle('active', b.dataset.nav === mode));
-        }
-
-        document.querySelectorAll('[data-nav]').forEach(btn =>
-            btn.addEventListener('click', () => setNavMode(btn.dataset.nav)));
+       
 
         // ============================================
         // PERGUNTA CONDICIONAL: PRIMEIRO MULTIFOCAL
