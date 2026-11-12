@@ -38,7 +38,7 @@
             color: var(--text);
             line-height: 1.6;
             min-height: 100vh;
-            padding-bottom: 90px;
+            padding-bottom: 50px;
         }
 
         /* ============================================
@@ -172,16 +172,10 @@
         }
 
         /* ============================================
-           SEÇÕES (ESTILO GOOGLE FORMS)
+           SEÇÕES (UMA POR TELA, ESTILO GOOGLE FORMS)
            ============================================ */
         .form-section { display: none; animation: fadeIn 0.4s ease; }
         .form-section.active { display: block; }
-
-        /* MODO PÁGINA ÚNICA: todas as seções visíveis */
-        body.mode-single .form-section { display: block; }
-        body.mode-single .nav-buttons .btn-next,
-        body.mode-single .nav-buttons .btn-back { display: none; }
-        body.mode-single .progress-container { display: none; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(14px); }
@@ -453,8 +447,6 @@
 
         .section-error.show { display: block; }
 
-
-
         /* ============================================
            TELA FINAL
            ============================================ */
@@ -504,7 +496,6 @@
             .brand-header { height: 210px; }
             .brand-title h1 { font-size: 20px; }
             .brand-fallback .fb-name { font-size: 24px; }
-            .preview-panel { right: 8px; bottom: 8px; }
         }
     </style>
 </head>
@@ -548,7 +539,9 @@
 
         <form id="pesquisa-cx" novalidate>
 
-            <!-- SEÇÃO 1 — ABERTURA, OBJETIVO E SIGILO -->
+            <!-- ==========================================
+                 SEÇÃO 1 — ABERTURA, OBJETIVO E SIGILO
+                 ========================================== -->
             <section class="form-section active">
                 <div class="card">
                     <span class="section-tag">Seção 1 de 7</span>
@@ -581,7 +574,9 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 2 — CONSENTIMENTO, IDENTIFICAÇÃO E CONTATO -->
+            <!-- ==========================================
+                 SEÇÃO 2 — CONSENTIMENTO, IDENTIFICAÇÃO E CONTATO
+                 ========================================== -->
             <section class="form-section">
                 <div class="card">
                     <span class="section-tag">Seção 2 de 7</span>
@@ -640,7 +635,9 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 3 — DADOS DA COMPRA -->
+            <!-- ==========================================
+                 SEÇÃO 3 — DADOS DA COMPRA
+                 ========================================== -->
             <section class="form-section">
                 <div class="card">
                     <span class="section-tag">Seção 3 de 7</span>
@@ -680,7 +677,9 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 4 — CONTEXTO DA LENTE -->
+            <!-- ==========================================
+                 SEÇÃO 4 — CONTEXTO DA LENTE
+                 ========================================== -->
             <section class="form-section">
                 <div class="card">
                     <span class="section-tag">Seção 4 de 7</span>
@@ -754,7 +753,9 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 5 — EXPERIÊNCIA COMERCIAL -->
+            <!-- ==========================================
+                 SEÇÃO 5 — EXPERIÊNCIA COMERCIAL
+                 ========================================== -->
             <section class="form-section">
                 <div class="card">
                     <span class="section-tag">Seção 5 de 7</span>
@@ -792,7 +793,9 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 6 — ADAPTAÇÃO VISUAL -->
+            <!-- ==========================================
+                 SEÇÃO 6 — ADAPTAÇÃO VISUAL
+                 ========================================== -->
             <section class="form-section">
                 <div class="card">
                     <span class="section-tag">Seção 6 de 7</span>
@@ -871,7 +874,9 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 7 — RECOMENDAÇÃO E FECHAMENTO -->
+            <!-- ==========================================
+                 SEÇÃO 7 — RECOMENDAÇÃO E FECHAMENTO
+                 ========================================== -->
             <section class="form-section">
                 <div class="card">
                     <span class="section-tag">Seção 7 de 7</span>
@@ -910,7 +915,9 @@
             </section>
         </form>
 
-        <!-- TELA FINAL -->
+        <!-- ==========================================
+             TELA FINAL
+             ========================================== -->
         <div class="success-screen" id="success-screen">
             <div class="success-card">
                 <div class="success-icon">✅</div>
@@ -926,8 +933,7 @@
 
     </div>
 
-  
- 
+    <script>
         // ============================================
         // NAVEGAÇÃO POR SEÇÕES (ESTILO GOOGLE FORMS)
         // ============================================
@@ -961,11 +967,13 @@
             const sec = sections[index];
             let ok = true;
 
+            // Campos de texto, telefone, e-mail, data, select e textarea obrigatórios
             sec.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], input[type="date"], select, textarea').forEach(el => {
                 if (el.hasAttribute('required') && !el.value.trim()) ok = false;
                 if (el.type === 'email' && el.value.trim() && !el.checkValidity()) ok = false;
             });
 
+            // Grupos de radio obrigatórios
             const radioNames = new Set();
             sec.querySelectorAll('input[type="radio"]').forEach(r => radioNames.add(r.name));
             radioNames.forEach(name => {
@@ -975,12 +983,15 @@
                 if (anyRequired && !anyChecked) ok = false;
             });
 
+            // Consentimento obrigatório
             const consent = sec.querySelector('#consentimento_lgpd');
             if (consent && !consent.checked) ok = false;
 
+            // Telefone com no mínimo 10 dígitos
             const phone = sec.querySelector('#telefone_cliente');
             if (phone && phone.value.replace(/\D/g, '').length < 10) ok = false;
 
+            // Pelo menos um sintoma marcado
             if (sec.querySelector('input[name="p5_sintomas"]')) {
                 if (!sec.querySelectorAll('input[name="p5_sintomas"]:checked').length) ok = false;
             }
@@ -990,20 +1001,7 @@
             return ok;
         }
 
-        // Valida todas as seções (modo página única)
-        function validateAllSections() {
-            let firstInvalid = -1;
-            sections.forEach((sec, i) => {
-                if (!validateSection(i) && firstInvalid === -1) firstInvalid = i;
-            });
-            if (firstInvalid >= 0) {
-                sections[firstInvalid].scrollIntoView({ behavior: 'smooth', block: 'start' });
-                return false;
-            }
-            return true;
-        }
-
-        // Botões de navegação
+        // Botões Avançar / Voltar
         sections.forEach((sec, i) => {
             const nextBtn = sec.querySelector('.btn-next');
             const backBtn = sec.querySelector('.btn-back');
@@ -1012,8 +1010,6 @@
             });
             if (backBtn) backBtn.addEventListener('click', () => showSection(i - 1));
         });
-
-       
 
         // ============================================
         // PERGUNTA CONDICIONAL: PRIMEIRO MULTIFOCAL
@@ -1093,9 +1089,10 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const isSingle = document.body.classList.contains('mode-single');
-            if (!(isSingle ? validateAllSections() : validateSection(currentSection))) return;
+            // Valida a seção atual (7) antes de enviar
+            if (!validateSection(currentSection)) return;
 
+            // Coletar dados
             const formData = new FormData(form);
             const data = {};
             for (let [key, value] of formData.entries()) {
@@ -1107,6 +1104,7 @@
                 }
             }
 
+            // 🔴 VERIFICAR ALERTAS VERMELHOS
             const redFlags = checkRedFlags(data);
 
             // 💾 INTEGRAÇÃO COM BACKEND / PLANILHA:
@@ -1120,7 +1118,7 @@
             */
             console.log('🚨 Alertas vermelhos:', redFlags);
 
-            // Tela final personalizada
+            // Tela final personalizada com o primeiro nome
             const firstName = (data.nome_cliente || '').trim().split(' ')[0];
             if (firstName) {
                 document.getElementById('success-title').textContent = `Obrigado, ${firstName}!`;
@@ -1128,9 +1126,9 @@
 
             form.style.display = 'none';
             document.getElementById('progress-container').style.display = 'none';
-            document.getElementById('preview-panel').style.display = 'none';
             document.getElementById('success-screen').classList.add('active');
 
+            // Mensagens dinâmicas conforme os alertas
             const technicalFlags = ['clinical', 'adaptation', 'first_multifocal', 'first_glasses', 'big_change', 'low_usage'];
             const commercialFlags = ['commercial', 'nps'];
             let alertHTML = '';
