@@ -7,6 +7,7 @@
     <style>
         /* ============================================
            IDENTIDADE VISUAL BRUCHMAN EYEWEAR
+           (azul-marinho + dourado, sem imagem)
            ============================================ */
         :root {
             --navy: #232d5f;
@@ -41,46 +42,43 @@
         }
 
         /* ============================================
-           CABEÇALHO COM FOTO DA LOJA
+           CABEÇALHO VETORIAL (SEM IMAGEM)
            ============================================ */
         .brand-header {
             position: relative;
-            height: 240px;
+            height: 250px;
             background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-light) 100%);
             overflow: hidden;
             display: flex;
             align-items: flex-end;
         }
 
-        .store-photo {
+        /* Filete dourado decorativo no topo */
+        .brand-header::before {
+            content: '';
             position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center 30%;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+            z-index: 2;
         }
 
-        .header-shade {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(27,35,73,0.92) 0%, rgba(27,35,73,0.25) 55%, rgba(27,35,73,0) 100%);
-            z-index: 1;
-        }
-
-        /* Logo vetorizado (opção 2 de cabeçalho) */
+        /* Logo vetorizado centralizado */
         .brand-fallback {
             position: absolute;
             inset: 0;
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 6px;
             color: var(--gold);
+            padding-bottom: 85px;
         }
 
-        .brand-fallback svg { width: 70px; height: auto; }
+        .brand-fallback svg { width: 74px; height: auto; }
 
         .brand-fallback .fb-name {
             font-size: 30px;
@@ -95,12 +93,13 @@
             font-weight: 600;
         }
 
-        .brand-header.img-missing .brand-fallback { display: flex; }
-        .brand-header.img-missing .store-photo { display: none; }
-
-        /* MODO LOGO forçado pelo painel de preview */
-        body.header-logo .store-photo { display: none; }
-        body.header-logo .brand-fallback { display: flex; }
+        .brand-fallback .fb-div {
+            width: 64px;
+            height: 2px;
+            background: var(--gold);
+            margin-top: 6px;
+            border-radius: 2px;
+        }
 
         .brand-title {
             position: relative;
@@ -455,7 +454,7 @@
         .section-error.show { display: block; }
 
         /* ============================================
-           PAINEL DE PREVIEW (2 OPÇÕES)
+           PAINEL DE PREVIEW (2 OPÇÕES DE NAVEGAÇÃO)
            Remova este bloco na versão de produção
            ============================================ */
         .preview-panel {
@@ -545,8 +544,9 @@
         @media (max-width: 420px) {
             .scale-option .btn { max-width: 46px; font-size: 14px; }
             .nps-option .btn { width: 32px; height: 32px; font-size: 13px; }
-            .brand-header { height: 200px; }
+            .brand-header { height: 210px; }
             .brand-title h1 { font-size: 20px; }
+            .brand-fallback .fb-name { font-size: 24px; }
             .preview-panel { right: 8px; bottom: 8px; }
         }
     </style>
@@ -554,20 +554,10 @@
 <body>
 
     <!-- ============================================
-         CABEÇALHO — OPÇÃO 1: FOTO DA LOJA
-         Salve a foto/banner como: bruchman-banner.jpg
-         (na mesma pasta deste arquivo HTML)
+         CABEÇALHO VETORIAL — IDENTIDADE BRUCHMAN
+         (sem imagem: logo SVG dourado sobre azul-marinho)
          ============================================ -->
     <header class="brand-header" id="brand-header">
-        <img
-            class="store-photo"
-            src="bruchman-banner.jpg"
-            alt="Fachada da Ótica Bruchman Eyewear"
-            onerror="document.getElementById('brand-header').classList.add('img-missing')"
-        >
-        <div class="header-shade"></div>
-
-        <!-- CABEÇALHO — OPÇÃO 2: LOGO VETORIZADO -->
         <div class="brand-fallback">
             <svg viewBox="0 0 120 40" fill="none" stroke="#c9a24b" stroke-width="5">
                 <circle cx="30" cy="22" r="16"/>
@@ -576,6 +566,7 @@
             </svg>
             <div class="fb-name">BRUCHMAN</div>
             <div class="fb-sub">EYEWEAR</div>
+            <div class="fb-div"></div>
         </div>
 
         <div class="brand-title">
@@ -979,19 +970,13 @@
     </div>
 
     <!-- ============================================
-         PAINEL DE PREVIEW — MANTÉM AS 2 OPÇÕES VISÍVEIS
-         Delete este bloco (HTML + JS correspondente)
-         quando decidir a versão final de produção
+         PAINEL DE PREVIEW — 2 OPÇÕES DE NAVEGAÇÃO
+         Delete este bloco na versão de produção
          ============================================ -->
     <div class="preview-panel" id="preview-panel">
-        <div class="pp-title">👁 Preview — 2 opções</div>
+        <div class="pp-title">👁 Preview — navegação</div>
         <div class="pp-group">
-            <span>Cabeçalho:</span>
-            <button type="button" class="pp-btn active" data-header="photo">📷 Foto</button>
-            <button type="button" class="pp-btn" data-header="logo">🏅 Logo</button>
-        </div>
-        <div class="pp-group">
-            <span>Navegação:</span>
+            <span>Layout:</span>
             <button type="button" class="pp-btn active" data-nav="steps">📑 Seções</button>
             <button type="button" class="pp-btn" data-nav="single">📜 Página única</button>
         </div>
@@ -1084,14 +1069,8 @@
         });
 
         // ============================================
-        // PAINEL DE PREVIEW: AS 2 OPÇÕES VISUALIZÁVEIS
+        // PAINEL DE PREVIEW: 2 OPÇÕES DE NAVEGAÇÃO
         // ============================================
-        function setHeaderMode(mode) {
-            document.body.classList.toggle('header-logo', mode === 'logo');
-            document.querySelectorAll('[data-header]').forEach(b =>
-                b.classList.toggle('active', b.dataset.header === mode));
-        }
-
         function setNavMode(mode) {
             document.body.classList.toggle('mode-single', mode === 'single');
             document.querySelectorAll('.section-error').forEach(e => e.classList.remove('show'));
@@ -1100,8 +1079,6 @@
                 b.classList.toggle('active', b.dataset.nav === mode));
         }
 
-        document.querySelectorAll('[data-header]').forEach(btn =>
-            btn.addEventListener('click', () => setHeaderMode(btn.dataset.header)));
         document.querySelectorAll('[data-nav]').forEach(btn =>
             btn.addEventListener('click', () => setNavMode(btn.dataset.nav)));
 
