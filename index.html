@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acompanhamento Pós-Venda | Ótica Bruchman Eyewear</title>
+    <style>
+        /* ============================================
+           IDENTIDADE VISUAL BRUCHMAN EYEWEAR
+           ============================================ */
+        :root {
+            --navy: #232d5f;
+            --navy-dark: #1b2349;
+            --navy-light: #33407a;
+            --gold: #c9a24b;
+            --gold-light: #e6c87e;
+            --cream: #f7f4ee;
+            --card: #ffffff;
+            --text: #26324b;
+            --text-muted: #6b7280;
+            --border: #e5e1d8;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+            --success: #16a34a;
+            --success-bg: #f0fdf4;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 4px 10px rgba(35, 45, 95, 0.08);
+            --shadow-lg: 0 12px 28px rgba(35, 45, 95, 0.14);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        /* ============================================
+           CABEÇALHO COM FOTO DA LOJA
+           ============================================ */
+        .brand-header {
+            position: relative;
+            height: 240px;
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-light) 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .store-photo {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+        }
+
+        .header-shade {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(27,35,73,0.92) 0%, rgba(27,35,73,0.25) 55%, rgba(27,35,73,0) 100%);
+            z-index: 1;
+        }
+
+        /* Logo vetorizado (opção 2 de cabeçalho) */
+        .brand-fallback {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--gold);
+        }
+
+        .brand-fallback svg { width: 70px; height: auto; }
+
+        .brand-fallback .fb-name {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            font-family: Georgia, serif;
+        }
+
+        .brand-fallback .fb-sub {
+            font-size: 13px;
+            letter-spacing: 8px;
+            font-weight: 600;
+        }
+
+        .brand-header.img-missing .brand-fallback { display: flex; }
+        .brand-header.img-missing .store-photo { display: none; }
+
+        /* MODO LOGO forçado pelo painel de preview */
+        body.header-logo .store-photo { display: none; }
+        body.header-logo .brand-fallback { display: flex; }
+
+        .brand-title {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 20px 22px;
+            color: white;
+        }
+
+        .brand-title .badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--navy-dark);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+        }
+
+        .brand-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: Georgia, serif;
+            letter-spacing: 1px;
+        }
+
+        .brand-title p { font-size: 14px; opacity: 0.92; }
+
+        /* ============================================
+           CONTAINER E PROGRESSO
+           ============================================ */
+        .container {
+            max-width: 680px;
+            margin: -34px auto 0;
+            padding: 0 16px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .progress-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 14px 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 18px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .progress-bar { height: 8px; background: var(--border); border-radius: 10px; overflow: hidden; }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* ============================================
+           SEÇÕES (ESTILO GOOGLE FORMS)
+           ============================================ */
+        .form-section { display: none; animation: fadeIn 0.4s ease; }
+        .form-section.active { display: block; }
+
+        /* MODO PÁGINA ÚNICA: todas as seções visíveis */
+        body.mode-single .form-section { display: block; }
+        body.mode-single .nav-buttons .btn-next,
+        body.mode-single .nav-buttons .btn-back { display: none; }
+        body.mode-single .progress-container { display: none; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border-top: 5px solid var(--gold);
+            padding: 26px 22px;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 6px;
+        }
+
+        .card h2 { font-size: 19px; color: var(--navy); font-family: Georgia, serif; margin-bottom: 8px; }
+        .card .section-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 18px; }
+        .card ul { padding-left: 18px; margin: 10px 0; }
+        .card li { font-size: 14px; color: var(--text-muted); margin-bottom: 6px; }
+
+        .privacy-box {
+            background: rgba(35, 45, 95, 0.05);
+            border-left: 4px solid var(--gold);
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--navy);
+            margin-top: 14px;
+        }
+
+        /* ============================================
+           CAMPOS DE TEXTO / SELECT
+           ============================================ */
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+        .optional-tag { font-weight: 400; color: var(--text-muted); font-size: 12px; }
+        .required-star { color: var(--danger); }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 13px 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: inherit;
+            background: white;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus { outline: none; border-color: var(--gold); }
+
+        .input-help { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+
+        .consent-box {
+            background: rgba(35, 45, 95, 0.04);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-top: 6px;
+        }
+
+        .consent-label {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .consent-label input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; accent-color: var(--navy); }
+
+        /* ============================================
+           ESCALAS LIKERT 1-5
+           ============================================ */
+        .question-label { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+        .question-sublabel { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+
+        .scale-group { display: flex; gap: 8px; justify-content: space-between; }
+        .scale-option { flex: 1; position: relative; }
+
+        .scale-option input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2; }
+
+        .scale-option .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 54px;
+            margin: 0 auto;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .scale-option input:checked + .btn {
+            background: var(--navy);
+            border-color: var(--navy);
+            color: var(--gold-light);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(35, 45, 95, 0.35);
+        }
+
+        .scale-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+
+        /* ============================================
+           NPS 0-10
+           ============================================ */
+        .nps-group { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+        .nps-option { position: relative; }
+        .nps-option input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2; }
+
+        .nps-option .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nps-option input:checked + .btn {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--navy-dark);
+            transform: scale(1.1);
+        }
+
+        /* ============================================
+           MÚLTIPLA ESCOLHA E CHECKBOXES
+           ============================================ */
+        .choice-group, .checkbox-group { display: flex; flex-direction: column; gap: 10px; }
+        .choice-option, .checkbox-option { position: relative; }
+        .choice-option input, .checkbox-option input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2; }
+
+        .card-choice, .card-check {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: white;
+        }
+
+        .card-choice::before, .card-check::before {
+            content: '';
+            width: 21px;
+            height: 21px;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .card-choice::before { border-radius: 50%; }
+        .card-check::before { border-radius: 6px; }
+
+        .choice-option input:checked + .card-choice { border-color: var(--navy); background: rgba(35, 45, 95, 0.05); }
+        .choice-option input:checked + .card-choice::before { background: var(--navy); border-color: var(--navy); box-shadow: inset 0 0 0 4px white; }
+
+        .checkbox-option input:checked + .card-check { border-color: var(--gold); background: rgba(201, 162, 75, 0.08); }
+        .checkbox-option input:checked + .card-check::before {
+            background: var(--navy);
+            border-color: var(--navy);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e6c87e'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+            background-size: 14px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .checkbox-option.positive input:checked + .card-check { border-color: var(--success); background: var(--success-bg); }
+        .checkbox-option.positive input:checked + .card-check::before {
+            background: var(--success);
+            border-color: var(--success);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+        }
+
+        .symptom-emoji { font-size: 18px; }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        textarea:focus { outline: none; border-color: var(--gold); }
+
+        .hidden { display: none !important; }
+
+        /* ============================================
+           NAVEGAÇÃO ENTRE SEÇÕES
+           ============================================ */
+        .nav-buttons { display: flex; gap: 12px; margin-top: 6px; }
+
+        .btn-next, .btn-submit {
+            flex: 1;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(35, 45, 95, 0.3);
+        }
+
+        .btn-next:hover, .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(35, 45, 95, 0.4); }
+
+        .btn-back {
+            padding: 16px 22px;
+            background: white;
+            color: var(--navy);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover { border-color: var(--navy); }
+
+        .section-error {
+            display: none;
+            background: var(--danger-bg);
+            color: var(--danger);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .section-error.show { display: block; }
+
+        /* ============================================
+           PAINEL DE PREVIEW (2 OPÇÕES)
+           Remova este bloco na versão de produção
+           ============================================ */
+        .preview-panel {
+            position: fixed;
+            right: 14px;
+            bottom: 14px;
+            z-index: 50;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(27, 35, 73, 0.25);
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .pp-title {
+            font-weight: 700;
+            color: var(--navy);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
+
+        .pp-group { display: flex; align-items: center; gap: 6px; }
+        .pp-group span { color: var(--text-muted); font-weight: 600; }
+
+        .pp-btn {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--navy);
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pp-btn.active { background: var(--navy); color: var(--gold-light); border-color: var(--navy); }
+
+        /* ============================================
+           TELA FINAL
+           ============================================ */
+        .success-screen { display: none; text-align: center; padding: 30px 10px; animation: fadeIn 0.5s ease; }
+        .success-screen.active { display: block; }
+
+        .success-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border-top: 5px solid var(--gold);
+            padding: 36px 24px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 18px;
+        }
+
+        .success-card h2 { font-size: 22px; color: var(--navy); font-family: Georgia, serif; margin-bottom: 10px; }
+        .success-card p { color: var(--text-muted); font-size: 15px; margin-bottom: 20px; }
+
+        .alert-box { padding: 16px; border-radius: var(--radius-sm); font-size: 14px; text-align: left; margin-bottom: 16px; }
+        .alert-box.warning { background: var(--danger-bg); border-left: 4px solid var(--danger); color: #991b1b; }
+        .alert-box.success { background: var(--success-bg); border-left: 4px solid var(--success); color: #166534; }
+
+        .footer-brand {
+            text-align: center;
+            margin-top: 26px;
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        @media (max-width: 420px) {
+            .scale-option .btn { max-width: 46px; font-size: 14px; }
+            .nps-option .btn { width: 32px; height: 32px; font-size: 13px; }
+            .brand-header { height: 200px; }
+            .brand-title h1 { font-size: 20px; }
+            .preview-panel { right: 8px; bottom: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+         CABEÇALHO — OPÇÃO 1: FOTO DA LOJA
+         Salve a foto/banner como: bruchman-banner.jpg
+         (na mesma pasta deste arquivo HTML)
+         ============================================ -->
+    <header class="brand-header" id="brand-header">
+        <img
+            class="store-photo"
+            src="bruchman-banner.jpg"
+            alt="Fachada da Ótica Bruchman Eyewear"
+            onerror="document.getElementById('brand-header').classList.add('img-missing')"
+        >
+        <div class="header-shade"></div>
+
+        <!-- CABEÇALHO — OPÇÃO 2: LOGO VETORIZADO -->
+        <div class="brand-fallback">
+            <svg viewBox="0 0 120 40" fill="none" stroke="#c9a24b" stroke-width="5">
+                <circle cx="30" cy="22" r="16"/>
+                <circle cx="90" cy="22" r="16"/>
+                <path d="M46 22 Q60 10 74 22"/>
+            </svg>
+            <div class="fb-name">BRUCHMAN</div>
+            <div class="fb-sub">EYEWEAR</div>
+        </div>
+
+        <div class="brand-title">
+            <span class="badge">Acompanhamento Pós-Venda</span>
+            <h1>Ótica Bruchman Eyewear</h1>
+            <p>Sua adaptação visual é a nossa prioridade 👓</p>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- PROGRESSO -->
+        <div class="progress-container" id="progress-container">
+            <div class="progress-text">
+                <span id="progress-label">Seção 1 de 7</span>
+                <span id="progress-percent">14%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <form id="pesquisa-cx" novalidate>
+
+            <!-- SEÇÃO 1 — ABERTURA, OBJETIVO E SIGILO -->
+            <section class="form-section active">
+                <div class="card">
+                    <span class="section-tag">Seção 1 de 7</span>
+                    <h2>Objetivo deste formulário</h2>
+                    <p class="section-desc">
+                        Este acompanhamento tem como objetivo entender como está a sua adaptação
+                        aos novos óculos e garantir que a sua experiência com a
+                        <strong>Bruchman Eyewear</strong> seja excelente do início ao fim.
+                    </p>
+
+                    <ul>
+                        <li>⏱️ Leva menos de <strong>2 minutos</strong> para responder.</li>
+                        <li>✅ <strong>Não existe resposta certa ou errada</strong> — queremos apenas a sua percepção.</li>
+                        <li>👁️ Suas respostas acionam nossa equipe clínica e técnica, se necessário.</li>
+                        <li>💬 Quanto mais detalhes você compartilhar, melhor será o nosso suporte.</li>
+                    </ul>
+
+                    <div class="privacy-box">
+                        🔒 <strong>Sigilo e privacidade:</strong> suas respostas e dados de contato serão
+                        utilizados exclusivamente para acompanhamento pós-venda, suporte técnico e
+                        melhoria da experiência. <strong>Nenhum dado de identificação do cliente será
+                        divulgado ou compartilhado.</strong>
+                    </div>
+                </div>
+
+                <div class="section-error">Revise os campos desta seção antes de continuar.</div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn-next">Começar avaliação →</button>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 2 — CONSENTIMENTO, IDENTIFICAÇÃO E CONTATO -->
+            <section class="form-section">
+                <div class="card">
+                    <span class="section-tag">Seção 2 de 7</span>
+                    <h2>Identificação e contato</h2>
+                    <p class="section-desc">
+                        Usaremos estas informações apenas para falar com você sobre a sua adaptação,
+                        caso seja necessário.
+                    </p>
+
+                    <div class="consent-box" style="margin-bottom: 18px;">
+                        <label class="consent-label" for="consentimento_lgpd">
+                            <input type="checkbox" id="consentimento_lgpd" name="consentimento_lgpd" value="sim" required>
+                            <span>
+                                Autorizo a equipe da <strong>Ótica Bruchman Eyewear</strong> a utilizar estas
+                                informações exclusivamente para acompanhamento da minha adaptação e suporte
+                                pós-venda, e autorizo o contato pelo telefone/WhatsApp informado.
+                                Estou ciente de que meus dados são tratados com sigilo.
+                                <span class="required-star">*</span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="nome_cliente">Nome completo <span class="required-star">*</span></label>
+                        <input type="text" id="nome_cliente" name="nome_cliente" placeholder="Digite seu nome" autocomplete="name" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="telefone_cliente">WhatsApp ou telefone <span class="required-star">*</span></label>
+                        <input type="tel" id="telefone_cliente" name="telefone_cliente" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel" required>
+                        <div class="input-help">Informe um número válido para contato da nossa equipe.</div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="email_cliente">E-mail <span class="optional-tag">(opcional)</span></label>
+                        <input type="email" id="email_cliente" name="email_cliente" placeholder="seuemail@email.com" autocomplete="email">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="melhor_horario">Melhor horário para contato <span class="optional-tag">(opcional)</span></label>
+                        <select id="melhor_horario" name="melhor_horario">
+                            <option value="">Selecione uma opção</option>
+                            <option value="manha">Manhã</option>
+                            <option value="tarde">Tarde</option>
+                            <option value="noite">Noite</option>
+                            <option value="comercial">Horário comercial</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-error">⚠️ Preencha o consentimento, nome e um telefone válido (DDD + número) para continuar.</div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn-back">← Voltar</button>
+                    <button type="button" class="btn-next">Avançar →</button>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 3 — DADOS DA COMPRA -->
+            <section class="form-section">
+                <div class="card">
+                    <span class="section-tag">Seção 3 de 7</span>
+                    <h2>Dados da compra</h2>
+                    <p class="section-desc">
+                        Estas informações ajudam nossa equipe a localizar seu pedido e entender
+                        em qual fase da adaptação você está.
+                    </p>
+
+                    <div class="input-group">
+                        <label for="data_compra">Data da compra <span class="required-star">*</span></label>
+                        <input type="date" id="data_compra" name="data_compra" required>
+                        <div class="input-help">Se não lembrar exatamente, informe a data aproximada.</div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="pedido_os">Número do pedido ou OS <span class="optional-tag">(opcional)</span></label>
+                        <input type="text" id="pedido_os" name="pedido_os" placeholder="Ex.: 12345">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="loja_unidade">Loja ou unidade <span class="optional-tag">(opcional)</span></label>
+                        <input type="text" id="loja_unidade" name="loja_unidade" placeholder="Ex.: Loja Centro">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="consultor_atendente">Consultor ou atendente <span class="optional-tag">(opcional)</span></label>
+                        <input type="text" id="consultor_atendente" name="consultor_atendente" placeholder="Nome do consultor, se lembrar">
+                    </div>
+                </div>
+
+                <div class="section-error">⚠️ Informe a data da compra para continuar.</div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn-back">← Voltar</button>
+                    <button type="button" class="btn-next">Avançar →</button>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 4 — CONTEXTO DA LENTE -->
+            <section class="form-section">
+                <div class="card">
+                    <span class="section-tag">Seção 4 de 7</span>
+                    <h2>Contexto da sua lente</h2>
+                    <p class="section-desc">
+                        Estas informações ajudam nossa equipe clínica a interpretar corretamente
+                        a sua adaptação.
+                    </p>
+
+                    <div class="question-label">1. Qual é o tipo de lente do seu óculos? <span class="required-star">*</span></div>
+                    <div class="choice-group" style="margin-bottom: 22px;">
+                        <label class="choice-option">
+                            <input type="radio" name="q0_tipo_lente" value="longe" required>
+                            <div class="card-choice">🛣️ Só para longe / dirigir / rua</div>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="q0_tipo_lente" value="perto">
+                            <div class="card-choice">📖 Só para perto / leitura</div>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="q0_tipo_lente" value="ocupacional">
+                            <div class="card-choice">💻 Intermediária / ocupacional / computador</div>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="q0_tipo_lente" value="multifocal">
+                            <div class="card-choice">🔀 Multifocal / progressiva</div>
+                        </label>
+                    </div>
+
+                    <div class="hidden" id="multifocal-question">
+                        <div class="question-label">2. Este é o seu primeiro multifocal? <span class="required-star">*</span></div>
+                        <div class="question-sublabel">A primeira adaptação ao multifocal pode exigir mais tempo e acompanhamento próximo.</div>
+                        <div class="choice-group" style="margin-bottom: 22px;">
+                            <label class="choice-option">
+                                <input type="radio" name="q0b_primeiro_multifocal" value="sim">
+                                <div class="card-choice">🆕 Sim, é meu primeiro multifocal</div>
+                            </label>
+                            <label class="choice-option">
+                                <input type="radio" name="q0b_primeiro_multifocal" value="nao">
+                                <div class="card-choice">✅ Não, já usei multifocal antes</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-label">3. Antes deste, você já usava óculos? <span class="required-star">*</span></div>
+                    <div class="choice-group">
+                        <label class="choice-option">
+                            <input type="radio" name="q0c_uso_anterior" value="primeiro" required>
+                            <div class="card-choice">🆕 Não, é meu primeiro óculos</div>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="q0c_uso_anterior" value="mudou_pouco">
+                            <div class="card-choice">🙂 Sim, e a graduação mudou pouco</div>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="q0c_uso_anterior" value="mudou_bastante">
+                            <div class="card-choice">😮 Sim, e a graduação mudou bastante</div>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="q0c_uso_anterior" value="nao_sei">
+                            <div class="card-choice">🤔 Não sei informar</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="section-error">⚠️ Responda todas as perguntas desta seção para continuar.</div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn-back">← Voltar</button>
+                    <button type="button" class="btn-next">Avançar →</button>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 5 — EXPERIÊNCIA COMERCIAL -->
+            <section class="form-section">
+                <div class="card">
+                    <span class="section-tag">Seção 5 de 7</span>
+                    <h2>Experiência Comercial</h2>
+                    <p class="section-desc">Sua avaliação sobre o atendimento e a entrega na Bruchman Eyewear.</p>
+
+                    <div class="question-label">4. O quão clara foi a explicação do nosso consultor sobre as lentes e tratamentos? <span class="required-star">*</span></div>
+                    <div class="scale-group">
+                        <label class="scale-option"><input type="radio" name="p1_atendimento" value="1" required><div class="btn">1</div></label>
+                        <label class="scale-option"><input type="radio" name="p1_atendimento" value="2"><div class="btn">2</div></label>
+                        <label class="scale-option"><input type="radio" name="p1_atendimento" value="3"><div class="btn">3</div></label>
+                        <label class="scale-option"><input type="radio" name="p1_atendimento" value="4"><div class="btn">4</div></label>
+                        <label class="scale-option"><input type="radio" name="p1_atendimento" value="5"><div class="btn">5</div></label>
+                    </div>
+                    <div class="scale-labels"><span>Muito confusa</span><span>Excelente e didática</span></div>
+
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
+
+                    <div class="question-label">5. Como você avalia o prazo de entrega e o conforto físico da armação? <span class="required-star">*</span></div>
+                    <div class="scale-group">
+                        <label class="scale-option"><input type="radio" name="p2_entrega" value="1" required><div class="btn">1</div></label>
+                        <label class="scale-option"><input type="radio" name="p2_entrega" value="2"><div class="btn">2</div></label>
+                        <label class="scale-option"><input type="radio" name="p2_entrega" value="3"><div class="btn">3</div></label>
+                        <label class="scale-option"><input type="radio" name="p2_entrega" value="4"><div class="btn">4</div></label>
+                        <label class="scale-option"><input type="radio" name="p2_entrega" value="5"><div class="btn">5</div></label>
+                    </div>
+                    <div class="scale-labels"><span>Muito insatisfeito</span><span>Muito satisfeito</span></div>
+                </div>
+
+                <div class="section-error">⚠️ Responda as duas avaliações desta seção para continuar.</div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn-back">← Voltar</button>
+                    <button type="button" class="btn-next">Avançar →</button>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 6 — ADAPTAÇÃO VISUAL -->
+            <section class="form-section">
+                <div class="card">
+                    <span class="section-tag">Seção 6 de 7</span>
+                    <h2>Adaptação Visual</h2>
+                    <p class="section-desc">
+                        Não existe resposta certa ou errada — marque exatamente o que você está sentindo.
+                    </p>
+
+                    <div class="question-label">6. O quanto foi fácil se adaptar aos seus novos óculos até agora? <span class="required-star">*</span></div>
+                    <div class="scale-group">
+                        <label class="scale-option"><input type="radio" name="p3_adaptacao" value="1" required><div class="btn">1</div></label>
+                        <label class="scale-option"><input type="radio" name="p3_adaptacao" value="2"><div class="btn">2</div></label>
+                        <label class="scale-option"><input type="radio" name="p3_adaptacao" value="3"><div class="btn">3</div></label>
+                        <label class="scale-option"><input type="radio" name="p3_adaptacao" value="4"><div class="btn">4</div></label>
+                        <label class="scale-option"><input type="radio" name="p3_adaptacao" value="5"><div class="btn">5</div></label>
+                    </div>
+                    <div class="scale-labels"><span>Muito difícil</span><span>Adaptação perfeita</span></div>
+
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
+
+                    <div class="question-label">7. Quantas horas por dia você está conseguindo usar os óculos sem cansaço? <span class="required-star">*</span></div>
+                    <div class="choice-group" style="margin-bottom: 24px;">
+                        <label class="choice-option">
+                            <input type="radio" name="p4_tempo_uso" value="menos_2h" required>
+                            <div class="card-choice">🕐 Menos de 2 horas</div>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="p4_tempo_uso" value="2h_4h">
+                            <div class="card-choice">🕑 Entre 2 e 4 horas</div>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="p4_tempo_uso" value="4h_8h">
+                            <div class="card-choice">🕓 Entre 4 e 8 horas</div>
+                        </label>
+                        <label class="choice-option">
+                            <input type="radio" name="p4_tempo_uso" value="dia_todo">
+                            <div class="card-choice">✨ O dia todo sem incômodos</div>
+                        </label>
+                    </div>
+
+                    <div class="question-label">8. Você está sentindo algum destes desconfortos? <span class="required-star">*</span></div>
+                    <div class="question-sublabel">Selecione todos que se aplicam</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="p5_sintomas" value="tontura">
+                            <div class="card-check"><span class="symptom-emoji">😵‍💫</span> Tontura ou sensação de “chão inclinado”</div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="p5_sintomas" value="dor_cabeca">
+                            <div class="card-check"><span class="symptom-emoji">🤕</span> Dor de cabeça ou tensão após uso prolongado</div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="p5_sintomas" value="visao_turva">
+                            <div class="card-check"><span class="symptom-emoji">🌫️</span> Visão turva, embaçada ou dificuldade de foco</div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="p5_sintomas" value="reflexos">
+                            <div class="card-check"><span class="symptom-emoji">💫</span> Reflexos noturnos excessivos em luzes e faróis</div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="p5_sintomas" value="armacao_incomodo">
+                            <div class="card-check"><span class="symptom-emoji">🔧</span> A armação escorrega, aperta ou machuca</div>
+                        </label>
+                        <label class="checkbox-option positive">
+                            <input type="checkbox" name="p5_sintomas" value="nenhum" id="chk-nenhum">
+                            <div class="card-check"><span class="symptom-emoji">✅</span> Nenhum sintoma! Adaptação 100% perfeita.</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="section-error">⚠️ Responda a escala de adaptação, o tempo de uso e marque pelo menos uma opção de sintomas.</div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn-back">← Voltar</button>
+                    <button type="button" class="btn-next">Avançar →</button>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 7 — RECOMENDAÇÃO E FECHAMENTO -->
+            <section class="form-section">
+                <div class="card">
+                    <span class="section-tag">Seção 7 de 7</span>
+                    <h2>Recomendação e feedback</h2>
+                    <p class="section-desc">Estamos quase no fim — obrigado por chegar até aqui! 💙</p>
+
+                    <div class="question-label">9. De 0 a 10, qual a probabilidade de você recomendar a Bruchman Eyewear para amigos e familiares? <span class="required-star">*</span></div>
+                    <div class="nps-group">
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="0" required><div class="btn">0</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="1"><div class="btn">1</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="2"><div class="btn">2</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="3"><div class="btn">3</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="4"><div class="btn">4</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="5"><div class="btn">5</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="6"><div class="btn">6</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="7"><div class="btn">7</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="8"><div class="btn">8</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="9"><div class="btn">9</div></label>
+                        <label class="nps-option"><input type="radio" name="p6_nps" value="10"><div class="btn">10</div></label>
+                    </div>
+                    <div class="scale-labels" style="margin-top: 10px;"><span>0 = Nada provável</span><span>10 = Extremamente provável</span></div>
+
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
+
+                    <div class="question-label">10. Tem algum elogio, sugestão ou relato que queira compartilhar?</div>
+                    <div class="question-sublabel">Opcional — nossa equipe clínica lê todas as respostas</div>
+                    <textarea name="p7_comentario" placeholder="Conte-nos como está sendo sua experiência com a Bruchman Eyewear..."></textarea>
+                </div>
+
+                <div class="section-error">⚠️ Selecione uma nota de 0 a 10 para enviar sua avaliação.</div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn-back">← Voltar</button>
+                    <button type="submit" class="btn-submit">Enviar avaliação ✨</button>
+                </div>
+            </section>
+        </form>
+
+        <!-- TELA FINAL -->
+        <div class="success-screen" id="success-screen">
+            <div class="success-card">
+                <div class="success-icon">✅</div>
+                <h2 id="success-title">Avaliação enviada!</h2>
+                <p>
+                    Obrigado por dedicar seu tempo para nos ajudar a cuidar da sua visão.
+                    Sua resposta já está com a equipe da <strong>Bruchman Eyewear</strong>.
+                </p>
+                <div id="dynamic-alert"></div>
+            </div>
+            <div class="footer-brand">Bruchman Eyewear • Cuidando da sua visão</div>
+        </div>
+
+    </div>
+
+    <!-- ============================================
+         PAINEL DE PREVIEW — MANTÉM AS 2 OPÇÕES VISÍVEIS
+         Delete este bloco (HTML + JS correspondente)
+         quando decidir a versão final de produção
+         ============================================ -->
+    <div class="preview-panel" id="preview-panel">
+        <div class="pp-title">👁 Preview — 2 opções</div>
+        <div class="pp-group">
+            <span>Cabeçalho:</span>
+            <button type="button" class="pp-btn active" data-header="photo">📷 Foto</button>
+            <button type="button" class="pp-btn" data-header="logo">🏅 Logo</button>
+        </div>
+        <div class="pp-group">
+            <span>Navegação:</span>
+            <button type="button" class="pp-btn active" data-nav="steps">📑 Seções</button>
+            <button type="button" class="pp-btn" data-nav="single">📜 Página única</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // NAVEGAÇÃO POR SEÇÕES (ESTILO GOOGLE FORMS)
+        // ============================================
+        const form = document.getElementById('pesquisa-cx');
+        const sections = Array.from(document.querySelectorAll('.form-section'));
+        const TOTAL_SECTIONS = sections.length;
+        let currentSection = 0;
+
+        const progressLabel = document.getElementById('progress-label');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressFill = document.getElementById('progress-fill');
+
+        function updateProgress() {
+            progressLabel.textContent = `Seção ${currentSection + 1} de ${TOTAL_SECTIONS}`;
+            const percent = Math.round(((currentSection + 1) / TOTAL_SECTIONS) * 100);
+            progressPercent.textContent = percent + '%';
+            progressFill.style.width = percent + '%';
+        }
+
+        function showSection(index) {
+            sections.forEach((sec, i) => sec.classList.toggle('active', i === index));
+            currentSection = index;
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // VALIDAÇÃO POR SEÇÃO
+        // ============================================
+        function validateSection(index) {
+            const sec = sections[index];
+            let ok = true;
+
+            sec.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], input[type="date"], select, textarea').forEach(el => {
+                if (el.hasAttribute('required') && !el.value.trim()) ok = false;
+                if (el.type === 'email' && el.value.trim() && !el.checkValidity()) ok = false;
+            });
+
+            const radioNames = new Set();
+            sec.querySelectorAll('input[type="radio"]').forEach(r => radioNames.add(r.name));
+            radioNames.forEach(name => {
+                const group = Array.from(sec.querySelectorAll(`input[type="radio"][name="${name}"]`));
+                const anyRequired = group.some(r => r.required);
+                const anyChecked = group.some(r => r.checked);
+                if (anyRequired && !anyChecked) ok = false;
+            });
+
+            const consent = sec.querySelector('#consentimento_lgpd');
+            if (consent && !consent.checked) ok = false;
+
+            const phone = sec.querySelector('#telefone_cliente');
+            if (phone && phone.value.replace(/\D/g, '').length < 10) ok = false;
+
+            if (sec.querySelector('input[name="p5_sintomas"]')) {
+                if (!sec.querySelectorAll('input[name="p5_sintomas"]:checked').length) ok = false;
+            }
+
+            const err = sec.querySelector('.section-error');
+            if (err) err.classList.toggle('show', !ok);
+            return ok;
+        }
+
+        // Valida todas as seções (modo página única)
+        function validateAllSections() {
+            let firstInvalid = -1;
+            sections.forEach((sec, i) => {
+                if (!validateSection(i) && firstInvalid === -1) firstInvalid = i;
+            });
+            if (firstInvalid >= 0) {
+                sections[firstInvalid].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return false;
+            }
+            return true;
+        }
+
+        // Botões de navegação
+        sections.forEach((sec, i) => {
+            const nextBtn = sec.querySelector('.btn-next');
+            const backBtn = sec.querySelector('.btn-back');
+            if (nextBtn) nextBtn.addEventListener('click', () => {
+                if (validateSection(i)) showSection(i + 1);
+            });
+            if (backBtn) backBtn.addEventListener('click', () => showSection(i - 1));
+        });
+
+        // ============================================
+        // PAINEL DE PREVIEW: AS 2 OPÇÕES VISUALIZÁVEIS
+        // ============================================
+        function setHeaderMode(mode) {
+            document.body.classList.toggle('header-logo', mode === 'logo');
+            document.querySelectorAll('[data-header]').forEach(b =>
+                b.classList.toggle('active', b.dataset.header === mode));
+        }
+
+        function setNavMode(mode) {
+            document.body.classList.toggle('mode-single', mode === 'single');
+            document.querySelectorAll('.section-error').forEach(e => e.classList.remove('show'));
+            if (mode === 'steps') showSection(currentSection);
+            document.querySelectorAll('[data-nav]').forEach(b =>
+                b.classList.toggle('active', b.dataset.nav === mode));
+        }
+
+        document.querySelectorAll('[data-header]').forEach(btn =>
+            btn.addEventListener('click', () => setHeaderMode(btn.dataset.header)));
+        document.querySelectorAll('[data-nav]').forEach(btn =>
+            btn.addEventListener('click', () => setNavMode(btn.dataset.nav)));
+
+        // ============================================
+        // PERGUNTA CONDICIONAL: PRIMEIRO MULTIFOCAL
+        // ============================================
+        function toggleMultifocalQuestion() {
+            const selected = document.querySelector('input[name="q0_tipo_lente"]:checked');
+            const box = document.getElementById('multifocal-question');
+            const radios = document.querySelectorAll('input[name="q0b_primeiro_multifocal"]');
+            const isMultifocal = selected && selected.value === 'multifocal';
+
+            box.classList.toggle('hidden', !isMultifocal);
+            radios.forEach(r => {
+                r.required = isMultifocal;
+                if (!isMultifocal) r.checked = false;
+            });
+        }
+
+        document.querySelectorAll('input[name="q0_tipo_lente"]').forEach(r =>
+            r.addEventListener('change', toggleMultifocalQuestion)
+        );
+
+        // ============================================
+        // EXCLUSIVIDADE DO "NENHUM SINTOMA"
+        // ============================================
+        const chkNenhum = document.getElementById('chk-nenhum');
+        const allSymptomChecks = document.querySelectorAll('input[name="p5_sintomas"]');
+
+        allSymptomChecks.forEach(chk => {
+            chk.addEventListener('change', () => {
+                if (chk.id === 'chk-nenhum' && chk.checked) {
+                    allSymptomChecks.forEach(other => { if (other !== chk) other.checked = false; });
+                } else if (chk.checked) {
+                    chkNenhum.checked = false;
+                }
+            });
+        });
+
+        // Data da compra não pode ser futura
+        document.getElementById('data_compra').max = new Date().toISOString().split('T')[0];
+
+        // ============================================
+        // PROTOCOLO DE ALERTA VERMELHO
+        // ============================================
+        function checkRedFlags(data) {
+            const alerts = new Set();
+            const adaptation = parseInt(data.p3_adaptacao || '10', 10);
+            const nps = parseInt(data.p6_nps || '10', 10);
+            const p1 = parseInt(data.p1_atendimento || '5', 10);
+            const p2 = parseInt(data.p2_entrega || '5', 10);
+
+            const clinicalSymptoms = ['tontura', 'dor_cabeca', 'visao_turva', 'reflexos'];
+            const symptoms = Array.isArray(data.p5_sintomas) ? data.p5_sintomas : (data.p5_sintomas ? [data.p5_sintomas] : []);
+            const hasClinicalSymptom = symptoms.some(s => clinicalSymptoms.includes(s));
+
+            if (adaptation <= 2) alerts.add('adaptation');
+            if (hasClinicalSymptom) alerts.add('clinical');
+            if (nps <= 6) alerts.add('nps');
+            if (p1 <= 2 || p2 <= 2) alerts.add('commercial');
+            if (data.p4_tempo_uso === 'menos_2h') alerts.add('low_usage');
+
+            if (data.q0_tipo_lente === 'multifocal' && data.q0b_primeiro_multifocal === 'sim' && (adaptation <= 3 || hasClinicalSymptom)) {
+                alerts.add('first_multifocal');
+            }
+            if (data.q0c_uso_anterior === 'primeiro' && (adaptation <= 3 || hasClinicalSymptom)) {
+                alerts.add('first_glasses');
+            }
+            if (data.q0c_uso_anterior === 'mudou_bastante' && adaptation <= 3) {
+                alerts.add('big_change');
+            }
+
+            return Array.from(alerts);
+        }
+
+        // ============================================
+        // ENVIO FINAL
+        // ============================================
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const isSingle = document.body.classList.contains('mode-single');
+            if (!(isSingle ? validateAllSections() : validateSection(currentSection))) return;
+
+            const formData = new FormData(form);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    if (Array.isArray(data[key])) data[key].push(value);
+                    else data[key] = [data[key], value];
+                } else {
+                    data[key] = value;
+                }
+            }
+
+            const redFlags = checkRedFlags(data);
+
+            // 💾 INTEGRAÇÃO COM BACKEND / PLANILHA:
+            const payload = { ...data, redFlags, enviado_em: new Date().toISOString() };
+            /*
+            fetch('https://seu-backend.com/api/pesquisa-bruchman', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            */
+            console.log('🚨 Alertas vermelhos:', redFlags);
+
+            // Tela final personalizada
+            const firstName = (data.nome_cliente || '').trim().split(' ')[0];
+            if (firstName) {
+                document.getElementById('success-title').textContent = `Obrigado, ${firstName}!`;
+            }
+
+            form.style.display = 'none';
+            document.getElementById('progress-container').style.display = 'none';
+            document.getElementById('preview-panel').style.display = 'none';
+            document.getElementById('success-screen').classList.add('active');
+
+            const technicalFlags = ['clinical', 'adaptation', 'first_multifocal', 'first_glasses', 'big_change', 'low_usage'];
+            const commercialFlags = ['commercial', 'nps'];
+            let alertHTML = '';
+
+            if (redFlags.some(f => technicalFlags.includes(f))) {
+                alertHTML += `
+                    <div class="alert-box warning">
+                        <strong>👨‍⚕️ Nossa equipe técnica foi notificada!</strong><br>
+                        Detectamos que sua adaptação pode estar exigindo mais esforço do que o esperado.
+                        A equipe da Bruchman Eyewear entrará em contato pelo telefone/WhatsApp informado
+                        para orientar ou agendar uma <strong>conferência de montagem, DNP, altura e ajuste
+                        anatômico</strong>, sem custo.
+                    </div>`;
+            }
+
+            if (redFlags.some(f => commercialFlags.includes(f))) {
+                alertHTML += `
+                    <div class="alert-box warning">
+                        <strong>📞 Seu feedback é prioridade!</strong><br>
+                        Um membro da nossa equipe entrará em contato em breve para entender melhor
+                        sua experiência e resolver qualquer pendência.
+                    </div>`;
+            }
+
+            if (!alertHTML) {
+                alertHTML = `
+                    <div class="alert-box success">
+                        <strong>🎉 Que maravilha!</strong><br>
+                        Ficamos felizes que sua adaptação está indo bem.
+                        Continue usando seus óculos e aproveite a visão nítida!
+                    </div>`;
+            }
+
+            document.getElementById('dynamic-alert').innerHTML = alertHTML;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Inicialização
+        toggleMultifocalQuestion();
+        updateProgress();
+    </script>
+</body>
+</html>
